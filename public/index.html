@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Monitor</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: #f4f4f4; }
+        .task-card { background: white; padding: 15px; margin-bottom: 10px; border-radius: 5px; display: flex; justify-content: space-between; }
+        .up { color: green; font-weight: bold; }
+        .down { color: red; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Task List</h1>
+    <div id="add-task">
+        <input id="name" placeholder="Task Name">
+        <input id="url" placeholder="URL (https://...)">
+        <input id="interval" placeholder="Cron(*/5 * * * *)">
+        <button onclick="addTask()">ADD</button>
+    </div>
+    <hr>
+    <div id="task-list"></div>
+
+    <script>
+        async function fetchTasks() {
+            const res = await fetch('/api/tasks', { headers: { 'Authorization': 'Basic ' + btoa('admin:password123') } });
+            const tasks = await res.json();
+            const list = document.getElementById('task-list');
+            list.innerHTML = tasks.map(t => `
+                <div class="task-card">
+                    <div>
+                        <strong>${t.name}</strong> - ${t.url} <br>
+                        STATUS： <span class="${t.status}">${t.status.toUpperCase()}</span> | 
+                        RPTIME： ${t.responseTime || 0}ms | STCODE： ${t.lastStatusCode || '-'}
+                    </div>
+                    <button onclick="deleteTask('${t.id}')">DELETE</button>
+                </div>
+            `).join('');
+        }
+
+        async function addTask() {
+            const body = {
+                name: document.getElementById('name').value,
+                url: document.getElementById('url').value,
+                interval: document.getElementById('interval').value
+            };
+            await fetch('/api/tasks', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Basic ' + btoa('admin:password123') 
+                },
+                body: JSON.stringify(body)
+            });
+            fetchTasks();
+        }
+
+        async function deleteTask(id) {
+            await fetch(`/api/tasks/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': 'Basic ' + btoa('admin:password123') }
+            });
+            fetchTasks();
+        }
+
+        setInterval(fetchTasks, 5000); 
+        fetchTasks();
+    </script>
+</body>
+</html>
