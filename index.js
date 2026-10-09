@@ -16,28 +16,26 @@ app.use(bodyParser.json());
 
 const auth = (req, res, next) => {
     const authHeader = req.headers['authorization'];
-
     if (!authHeader) {
-        return res.status(401)
-            .set('WWW-Authenticate', 'Basic realm="monitor"')
-            .send('Authentication required');
+        return res.status(401).set('WWW-Authenticate', 'Basic realm="monitor"').send('Unauthorized');
+    }
+
+    const parts = authHeader.split(' ');
+    if (parts.length !== 2 || parts[0].toLowerCase() !== 'basic') {
+        return res.status(400).send('Invalid Authorization header format');
     }
 
     try {
-        const token = authHeader.split(' ')[1];
-        if (!token) throw new Error('No token provided');
-
-        const decoded = Buffer.from(token, 'base64').toString();
+        const decoded = Buffer.from(parts[1], 'base64').toString();
         const [user, pass] = decoded.split(':');
 
         if (user === UNAME && pass === UPASS) {
-            next(); 
+            next();
         } else {
-            res.status(401).send('Invalid username or password');
+            res.status(401).send('Invalid Credentials');
         }
     } catch (err) {
-        console.error('Auth error:', err);
-        res.status(401).send('Invalid authorization header format');
+        res.status(400).send('Invalid Base64 encoding');
     }
 };
 app.use(auth); 
