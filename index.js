@@ -61,7 +61,7 @@ async function checkUrl(task) {
         await page.setDefaultTimeout(30000);
 
         const start = Date.now();
-        const response = await page.goto(task.url, { waitUntil: 'domidle' });
+        const response = await page.goto(task.url, { waitUntil: 'domcontentloaded' });
         const duration = Date.now() - start;
 
         const statusCode = response ? response.status() : 'ERROR';
