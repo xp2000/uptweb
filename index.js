@@ -30,8 +30,6 @@ const auth = (req, res, next) => {
         const decoded = Buffer.from(token, 'base64').toString();
         const [user, pass] = decoded.split(':');
 
-        console.log(`AUTH - user: ${user}, pass: ${pass}`);
-
         if (user === UNAME && pass === UPASS) {
             next(); 
         } else {
@@ -98,6 +96,11 @@ function refreshSchedules() {
         });
     });
 }
+
+app.get('/api/config', (req, res) => {
+    const authToken = Buffer.from(`${UNAME}:${UPASS}`).toString('base64');
+    res.json({ authToken });
+});
 
 app.get('/api/tasks', auth, (req, res) => {
     res.json(tasks);
