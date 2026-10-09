@@ -1,6 +1,6 @@
 const express = require('express');
-const { chromium } = require('playwright');
-const { stealth } = require('playwright-stealth');
+const { chromium } = require('playwright-extra');
+const { stealth } = require('puppeteer-extra-plugin-stealth');
 const cron = require('node-cron');
 const fs = require('fs');
 const path = require('path');
@@ -57,12 +57,13 @@ async function checkUrl(task) {
     console.log(`[${new Date().toISOString()}] Check: ${task.name}`);
     let browser;
     try {
+        chromium.use(stealth());
         browser = await chromium.launch({ headless: true,executablePath: '/usr/bin/chromium-browser' });
         const context = await browser.newContext({
-          userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
+            userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+            viewport: { width: 1280, height: 800 }
         });
         const page = await context.newPage();        
-        await stealth(page);
         await page.setDefaultTimeout(30000);
         const start = Date.now();
         const response = await page.goto(task.url, { waitUntil: 'domcontentloaded' });
