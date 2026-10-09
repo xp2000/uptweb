@@ -15,15 +15,25 @@ app.use(bodyParser.json());
 
 const auth = (req, res, next) => {
     const authHeader = req.headers['authorization'];
+
     if (!authHeader) {
-        return res.status(401).set('WWW-Authenticate', 'Basic realm="monitor"').send('Unauthorized');
+        return res.status(401)
+            .set('WWW-Authenticate', 'Basic realm="monitor"')
+            .send('Authentication required');
     }
-    const auth = Buffer.from(authHeader.split(' ')[1], 'base64').toString();
-    const [user, pass] = auth.split(':');
-    if (user === UNAME && pass === UPASS) {
-        next();
-    } else {
-        res.status(401).send('Invalid Credentials');
+
+    try {
+        const token = authHeader.split(' ')[1];
+        const decoded = Buffer.from(token, 'base64').toString();
+        const [user, pass] = decoded.split(':');
+
+        if (user === UNAME && pass === UPASS) {
+            next();
+        } else {
+            res.status(401).send('Invalid username or password');
+        }
+    } catch (err) {
+        res.status(401).send('Invalid authorization header');
     }
 };
 app.use(auth); 
