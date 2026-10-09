@@ -58,7 +58,7 @@ async function checkUrl(task) {
     let browser;
     try {
         chromium.use(stealth);
-        browser = await chromium.launch({ headless: true,executablePath: '/usr/bin/chromium-browser' });
+        browser = await chromium.launch({ headless: true,executablePath: '/usr/bin/chromium-browser',args: ['--no-sandbox', '--disable-setuid-sandbox'] });
         const context = await browser.newContext({
             userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
             viewport: { width: 1280, height: 800 }
