@@ -56,7 +56,7 @@ async function checkUrl(task) {
     console.log(`[${new Date().toISOString()}] Check: ${task.name}`);
     let browser;
     try {
-        browser = await chromium.launch({ headless: true });
+        browser = await chromium.launch({ headless: true,executablePath: '/usr/bin/chromium-browser' });
         const page = await browser.newPage();
         await page.setDefaultTimeout(30000);
 
