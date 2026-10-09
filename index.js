@@ -25,16 +25,21 @@ const auth = (req, res, next) => {
 
     try {
         const token = authHeader.split(' ')[1];
+        if (!token) throw new Error('No token provided');
+
         const decoded = Buffer.from(token, 'base64').toString();
         const [user, pass] = decoded.split(':');
-        console.log(`user:${UNAME}!`);
+
+        console.log(`AUTH - user: ${user}, pass: ${pass}`);
+
         if (user === UNAME && pass === UPASS) {
-            next();
+            next(); 
         } else {
             res.status(401).send('Invalid username or password');
         }
     } catch (err) {
-        res.status(401).send('Invalid authorization header');
+        console.error('Auth error:', err);
+        res.status(401).send('Invalid authorization header format');
     }
 };
 app.use(auth); 
