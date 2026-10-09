@@ -21,8 +21,20 @@
     <div id="task-list"></div>
 
     <script>
+        let globalAuthToken = "";
+        async function init() {
+            try {
+                const res = await fetch('/api/config');
+                const config = await res.json();
+                globalAuthToken = config.authToken;
+                fetchTasks();
+            } catch (err) {
+                console.error("fetch config err", err);
+            }
+        }
+        
         async function fetchTasks() {
-            const res = await fetch('/api/tasks', { headers: { 'Authorization': 'Basic ' + btoa('admin:password123') } });
+            const res = await fetch('/api/tasks', { headers: { 'Authorization': 'Basic ' + globalAuthToken } });
             const tasks = await res.json();
             const list = document.getElementById('task-list');
             list.innerHTML = tasks.map(t => `
@@ -47,7 +59,7 @@
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
-                    'Authorization': 'Basic ' + btoa('admin:password123') 
+                    'Authorization': 'Basic ' + globalAuthToken 
                 },
                 body: JSON.stringify(body)
             });
@@ -57,7 +69,7 @@
         async function deleteTask(id) {
             await fetch(`/api/tasks/${id}`, {
                 method: 'DELETE',
-                headers: { 'Authorization': 'Basic ' + btoa('admin:password123') }
+                headers: { 'Authorization': 'Basic ' + globalAuthToken }
             });
             fetchTasks();
         }
