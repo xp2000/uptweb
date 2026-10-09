@@ -4,6 +4,7 @@ const cron = require('node-cron');
 const fs = require('fs');
 const path = require('path');
 const bodyParser = require('body-parser');
+require('dotenv').config();
 
 const app = express();
 const UNAME    = process.env.UNAME    || 'admin';
@@ -26,7 +27,7 @@ const auth = (req, res, next) => {
         const token = authHeader.split(' ')[1];
         const decoded = Buffer.from(token, 'base64').toString();
         const [user, pass] = decoded.split(':');
-
+        console.log(`user:${UNAME}!`);
         if (user === UNAME && pass === UPASS) {
             next();
         } else {
