@@ -42,7 +42,7 @@
                     <div>
                         <strong>${t.name}</strong> - ${t.url} <br>
                         STATUS： <span class="${t.status}">${t.status.toUpperCase()}</span> | 
-                        RPTIME： ${t.responseTime || 0}ms | STCODE： ${t.lastStatusCode || '-'}
+                        RPTIME： ${t.responseTime || 0}ms | STCODE： ${t.lastStatusCode || '-'} | TIME： ${t.lastCheck || '-'}
                     </div>
                     <button onclick="deleteTask('${t.id}')">DELETE</button>
                 </div>
