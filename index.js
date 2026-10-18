@@ -48,7 +48,13 @@ if (fs.existsSync(DATA_FILE)) {
 }
 
 const saveTasks = () => {
-    fs.writeFileSync(DATA_FILE, JSON.stringify(tasks, null, 2));
+    const tempFile = DATA_FILE + '.tmp';
+    try {
+        fs.writeFileSync(tempFile, JSON.stringify(tasks, null, 2), 'utf8');
+        fs.renameSync(tempFile, DATA_FILE);
+    } catch (err) {
+        console.error("Save task err:", err);
+    }
 };
 
 const scheduledJobs = {};
