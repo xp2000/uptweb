@@ -1,5 +1,5 @@
 const express = require('express');
-const { chromium } = require('playwright-extra');
+const { chromium } = require('playwright');
 const cron = require('node-cron');
 const fs = require('fs');
 const path = require('path');
