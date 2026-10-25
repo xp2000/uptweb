@@ -1,5 +1,5 @@
 const express = require('express');
-const { chromium } = require('playwright');
+const { chromium } = require('playwright-core');
 const cron = require('node-cron');
 const fs = require('fs');
 const path = require('path');
@@ -62,7 +62,19 @@ async function checkUrl(task) {
     console.log(`[${new Date().toISOString()}] Check: ${task.name}`);
     let browser;
     try {
-        browser = await chromium.launch({ headless: true,executablePath: '/usr/bin/chromium-browser',args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+        const executablePath = '/usr/bin/chromium-headless-shell';
+        browser = await chromium.launch({
+            executablePath: executablePath, 
+            headless: true,
+            args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-gpu',
+            '--single-process', 
+            '--disable-dev-shm-usage',
+            '--disable-software-rasterizer'
+            ]
+        });
         const context = await browser.newContext({
             userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
             viewport: { width: 1280, height: 800 }
