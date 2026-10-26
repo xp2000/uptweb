@@ -40,7 +40,7 @@
             list.innerHTML = tasks.map(t => `
                 <div class="task-card" style="border-bottom: 1px solid #ccc; padding: 10px;">
                     <div style="display: flex; justify-content: space-between;">
-                        <strong>${t.name}</strong>
+                        <strong style="margin-right:10px">${t.name}</strong>
                         <span class="${t.status === 'up' ? 'green' : 'red'}">${t.status.toUpperCase()}</span>
                     </div>
                     <small>${t.url}</small><br>
