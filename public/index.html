@@ -38,13 +38,26 @@
             const tasks = await res.json();
             const list = document.getElementById('task-list');
             list.innerHTML = tasks.map(t => `
-                <div class="task-card">
-                    <div>
-                        <strong>${t.name}</strong> - ${t.url} <br>
-                        STATUS： <span class="${t.status}">${t.status.toUpperCase()}</span> | 
-                        RPTIME： ${t.responseTime || 0}ms | STCODE： ${t.lastStatusCode || '-'} | TIME： ${t.lastCheck || '-'}
+                <div class="task-card" style="border-bottom: 1px solid #ccc; padding: 10px;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <strong>${t.name}</strong>
+                        <span class="${t.status === 'up' ? 'green' : 'red'}">${t.status.toUpperCase()}</span>
                     </div>
-                    <button onclick="deleteTask('${t.id}')">DELETE</button>
+                    <small>${t.url}</small><br>
+                    <small>ReTime: ${t.responseTime}ms | StCode: ${t.lastStatusCode || '-'}</small>
+                    <small>Time： ${t.lastCheck || '-'}</small>
+                    ${t.screenshot ? `
+                        <div style="margin-top: 10px;">
+                            <a href="${t.screenshot}" target="_blank">
+                                <img src="${t.screenshot}" style="width: 200px; border: 1px solid #999; cursor: pointer;" 
+                                     onerror="this.style.display='none'">
+                            </a>
+                            <br>
+                            <a href="${t.screenshot}" target="_blank">View</a>
+                        </div>
+                    ` : ''}
+                    
+                    <button onclick="deleteTask('${t.id}')" style="margin-top: 5px;">Delete</button>
                 </div>
             `).join('');
         }
