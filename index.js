@@ -42,7 +42,7 @@ const auth = (req, res, next) => {
 };
 app.use(auth); 
 app.use(express.static('public'));
-app.use(express.static(path.join(__dirname, 'screenshots')));
+app.use('/screenshots', express.static(path.join(__dirname, 'screenshots')));
 
 let tasks = [];
 if (fs.existsSync(DATA_FILE)) {
