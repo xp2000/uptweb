@@ -11,6 +11,8 @@ const UNAME    = process.env.UNAME    || 'admin';
 const UPASS    = process.env.UPASS    || 'password123';
 const PORT     = process.env.PORT     || 3000;
 const DATA_FILE = path.join(__dirname, 'tasks.json');
+const SCREEN_DIR = path.join(__dirname, 'screenshots');
+if (!fs.existsSync(SCREEN_DIR)) fs.mkdirSync(SCREEN_DIR);
 
 app.use(bodyParser.json());
 
@@ -94,6 +96,13 @@ async function checkUrl(task) {
         task.responseTime = duration;
         
         await new Promise(resolve => setTimeout(resolve, 120000));
+        
+        const screenshotName = `${task.id}.png`;
+        const screenshotPath = path.join(SCREEN_DIR, screenshotName);
+        await page.screenshot({ path: screenshotPath, fullPage: true });
+
+        task.screenshot = `/screenshots/${screenshotName}`;
+        
         await browser.close();
     } catch (error) {
         task.lastCheck = new Date().toISOString();
